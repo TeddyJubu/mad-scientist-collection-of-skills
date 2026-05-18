@@ -1,0 +1,4 @@
+interface:
+  display_name: "ListingLens Studio"
+  short_description: "Real-estate image generation, editing, QA, and multi-agent handoff for listing marketing visuals"
+  default_prompt: "Use $listinglens-studio to plan, generate, edit, QA, or hand off a real estate or marketing image asset. Prefer ChatGPT/Codex native image generation when available; support Hermes, OpenClaw, Manus, Genspark, and generic agent job packets with plain-language needs_info reminders instead of hard rejection. Use the local API script only for explicit CLI/API workflows."

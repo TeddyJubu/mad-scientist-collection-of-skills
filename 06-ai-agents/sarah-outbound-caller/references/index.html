@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mad Scientist Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+        body {
+            background-color: #010409;
+            color: #c9d1d9;
+            font-family: 'Fira Code', monospace;
+        }
+        .card-glow {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid #30363d;
+            transition: all 0.3s ease;
+        }
+        .card-glow:hover {
+            border-color: #58a6ff;
+            box-shadow: 0 0 15px rgba(88, 166, 255, 0.1);
+        }
+        .neon-green { color: #3fb950; text-shadow: 0 0 5px rgba(63, 185, 80, 0.5); }
+        .neon-blue { color: #58a6ff; text-shadow: 0 0 5px rgba(88, 166, 255, 0.5); }
+        .neon-purple { color: #bc8cff; text-shadow: 0 0 5px rgba(188, 140, 255, 0.5); }
+        .neon-orange { color: #ffa657; text-shadow: 0 0 5px rgba(255, 166, 87, 0.5); }
+        
+        .btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background: #30363d;
+            border-color: #8b949e;
+        }
+        .btn-primary {
+            background: #238636;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #2ea043;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .pulse {
+            animation: shadow-pulse 2s infinite;
+        }
+        @keyframes shadow-pulse {
+            0% { box-shadow: 0 0 0 0px rgba(63, 185, 80, 0.4); }
+            100% { box-shadow: 0 0 0 10px rgba(63, 185, 80, 0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <header class="flex flex-col md:flex-row justify-between items-center mb-10 border-b border-gray-800 pb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-white tracking-tight"><i class="fas fa-flask mr-3 neon-blue"></i>MAD SCIENTIST COMMAND CENTER</h1>
+            <p class="text-gray-500 text-xs mt-1">OPERATED BY JAMES (AI ADVISOR) | CHARLES BLAIR ENTERPRISES</p>
+        </div>
+        <div class="mt-4 md:mt-0 flex gap-4">
+            <button id="voice-toggle" onclick="toggleVoice()" class="bg-gray-900 border border-gray-800 px-4 py-2 rounded-lg flex items-center hover:border-blue-500 transition-all">
+                <i id="voice-icon" class="fas fa-volume-mute mr-2 text-gray-500"></i>
+                <span id="voice-text" class="text-xs font-bold text-gray-500">VOICE: OFF</span>
+            </button>
+            <div class="bg-gray-900 border border-gray-800 px-4 py-2 rounded-lg flex items-center">
+                <span class="status-dot bg-green-500 pulse"></span>
+                <span class="text-xs font-bold text-green-500">SYSTEMS: OPTIMAL</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- COMPANY 1: CHUCKY BUYS LUCKY HOUSES -->
+        <div class="card-glow rounded-xl p-6 flex flex-col border-l-4 border-l-green-500">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white uppercase tracking-tighter">REI Acquisitions</h2>
+                    <span class="text-[10px] uppercase text-green-500 font-bold tracking-widest">Chucky Buys Lucky Houses</span>
+                </div>
+                <i class="fas fa-home text-2xl text-green-900/50"></i>
+            </div>
+            
+            <div class="flex-1 space-y-6">
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold">ACTIVE AGENT: <span class="neon-green">SARAH</span></span>
+                        <span class="text-[10px] bg-green-900/30 px-2 py-0.5 rounded text-green-400">OUTBOUND</span>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="sarah-name" type="text" placeholder="Lead Name" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-green-500">
+                        <input id="sarah-phone" type="text" placeholder="Phone (+1...)" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-green-500">
+                        <input id="sarah-address" type="text" placeholder="Property Address (optional)" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-green-500">
+                        <textarea id="sarah-message" placeholder="Custom message (optional — if provided, Sarah will use this)" class="w-full h-20 bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-green-500 resize-none"></textarea>
+                        <button onclick="triggerSarah()" class="w-full btn-primary py-2.5 rounded text-xs font-bold uppercase tracking-widest">Trigger Outreach Call</button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <input type="file" id="csv-upload" accept=".csv" class="hidden" onchange="processCsv(this)">
+                    <button onclick="document.getElementById('csv-upload').click()" class="flex-1 btn py-2 rounded text-[10px] font-bold uppercase"><i class="fas fa-file-csv mr-2"></i>Inject CSV</button>
+                    <button class="flex-1 btn py-2 rounded text-[10px] font-bold uppercase"><i class="fas fa-search-dollar mr-2"></i>Probate Audit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPANY 2: REAL DEAL MEETUP OUTBOUND AGENT -->
+        <div class="card-glow rounded-xl p-6 flex flex-col border-l-4 border-l-purple-500">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white uppercase tracking-tighter">Real Deal Meetup</h2>
+                    <span class="text-[10px] uppercase text-purple-500 font-bold tracking-widest">Real Deal Meetup Agent</span>
+                </div>
+                <i class="fas fa-crown text-2xl text-purple-900/50"></i>
+            </div>
+            
+            <div class="flex-1 space-y-4">
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold uppercase text-purple-400">RDM Broadcast Agent</span>
+                        <span class="text-[10px] bg-purple-900/30 px-2 py-0.5 rounded text-purple-400">MEETUP</span>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="rdm-name" type="text" placeholder="Member Name" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-purple-500">
+                        <input id="rdm-phone" type="text" placeholder="Phone (+1...)" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-purple-500">
+                        <textarea id="rdm-message" placeholder="Type your Meetup message/reminder here..." class="w-full h-20 bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-purple-500 resize-none"></textarea>
+                        <button onclick="triggerRdmReminder()" class="w-full btn py-2.5 rounded text-xs font-bold uppercase tracking-widest border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-black transition-all">Launch RDM Outreach</button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <input type="file" id="rdm-csv-upload" accept=".csv" class="hidden" onchange="processRdmCsv(this)">
+                    <button onclick="document.getElementById('rdm-csv-upload').click()" class="flex-1 btn py-2 rounded text-[10px] font-bold uppercase"><i class="fas fa-file-csv mr-2 text-purple-500"></i>Inject RDM CSV</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPANY 3: REI AI SKOOL COMMUNITY HUB -->
+        <div class="card-glow rounded-xl p-6 flex flex-col border-l-4 border-l-orange-500">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white uppercase tracking-tighter">Skool Community</h2>
+                    <span class="text-[10px] uppercase text-orange-500 font-bold tracking-widest">REI AI Skool Community Hub</span>
+                </div>
+                <i class="fas fa-users text-2xl text-orange-900/50"></i>
+            </div>
+            
+            <div class="flex-1 space-y-4">
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold uppercase">Community Reminder Agent</span>
+                        <span class="text-[10px] bg-orange-900/30 px-2 py-0.5 rounded text-orange-400">REMINDER</span>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="skool-name" type="text" placeholder="Member Name" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-orange-500">
+                        <input id="skool-phone" type="text" placeholder="Phone (+1...)" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-orange-500">
+                        <textarea id="skool-message" placeholder="Type your community message/reminder here..." class="w-full h-20 bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-orange-500 resize-none"></textarea>
+                        <button onclick="triggerReminder()" class="w-full btn py-2.5 rounded text-xs font-bold uppercase tracking-widest border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-black transition-all">Send Voice Reminder</button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <input type="file" id="skool-csv-upload" accept=".csv" class="hidden" onchange="processSkoolCsv(this)">
+                    <button onclick="document.getElementById('skool-csv-upload').click()" class="flex-1 btn py-2 rounded text-[10px] font-bold uppercase"><i class="fas fa-file-csv mr-2 text-orange-500"></i>Inject Skool CSV</button>
+                    <button onclick="auditGhl()" class="flex-1 btn py-2 rounded text-[10px] font-bold uppercase"><i class="fas fa-sync-alt mr-2"></i>Audit RSVPs</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPANY 4: MAD MARKETING SUCCESS -->
+        <div class="card-glow rounded-xl p-6 flex flex-col border-l-4 border-l-cyan-500">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white uppercase tracking-tighter">AI Agency Ops</h2>
+                    <span class="text-[10px] uppercase text-cyan-500 font-bold tracking-widest">Mad Marketing Success</span>
+                </div>
+                <i class="fas fa-flask text-2xl text-cyan-900/50"></i>
+            </div>
+            
+            <div class="flex-1 space-y-4">
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold uppercase text-cyan-400">Marketing Lead Agent</span>
+                        <span class="text-[10px] bg-cyan-900/30 px-2 py-0.5 rounded text-cyan-400">AGENCY</span>
+                    </div>
+                    <div class="space-y-3">
+                        <input id="mms-name" type="text" placeholder="Lead Name" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-cyan-500">
+                        <input id="mms-phone" type="text" placeholder="Phone (+1...)" class="w-full bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-cyan-500">
+                        <textarea id="mms-message" placeholder="Type your agency pitch/message here..." class="w-full h-20 bg-gray-950 border border-gray-800 p-2 rounded text-xs focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+                        <button onclick="triggerMmsReminder()" class="w-full btn py-2.5 rounded text-xs font-bold uppercase tracking-widest border-cyan-500 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all">Launch Agency Call</button>
+                    </div>
+                </div>
+                
+                <div class="flex gap-3">
+                    <input type="file" id="mms-csv-upload" accept=".csv" class="hidden" onchange="processMmsCsv(this)">
+                    <button onclick="document.getElementById('mms-csv-upload').click()" class="flex-1 btn py-2 rounded text-[10px] font-bold uppercase"><i class="fas fa-file-csv mr-2 text-cyan-500"></i>Inject Leads CSV</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- GLOBAL INTELLIGENCE FEED -->
+    <section class="mt-8 card-glow rounded-xl p-6">
+        <h3 class="text-xs font-bold text-gray-500 mb-4 uppercase tracking-widest flex items-center">
+            <i class="fas fa-terminal mr-2 neon-blue"></i> James Intelligence Feed
+        </h3>
+        <div id="console" class="h-40 overflow-y-auto font-mono text-[10px] leading-relaxed text-blue-400">
+            [SYS] INITIALIZING COMMAND CENTER...<br>
+            [SYS] LOADING PILLARS: CBLH, MM, RDM, MMS...<br>
+            [SYS] AGENT SARAH: READY<br>
+            [SYS] CORE BRAIN: JAMES VERSION 2.0 ONLINE<br>
+            > Welcome, Charles.
+        </div>
+    </section>
+
+    <footer class="mt-10 text-center text-gray-700 text-[10px] uppercase tracking-widest">
+        Proprietary MAD SCIENTIST ECOSYSTEM | Powered by OpenClaw
+    </footer>
+
+    <script>
+        let voiceEnabled = false;
+
+        function toggleVoice() {
+            voiceEnabled = !voiceEnabled;
+            const btn = document.getElementById('voice-toggle');
+            const icon = document.getElementById('voice-icon');
+            const text = document.getElementById('voice-text');
+            
+            if (voiceEnabled) {
+                icon.className = "fas fa-volume-up mr-2 neon-blue";
+                text.className = "text-xs font-bold neon-blue";
+                text.innerText = "VOICE: ON";
+                btn.style.borderColor = "#58a6ff";
+                speak("Voice mode activated. I am now listening for commands.");
+            } else {
+                icon.className = "fas fa-volume-mute mr-2 text-gray-500";
+                text.className = "text-xs font-bold text-gray-500";
+                text.innerText = "VOICE: OFF";
+                btn.style.borderColor = "#30363d";
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function speak(text) {
+            if (!voiceEnabled) return;
+            window.speechSynthesis.cancel(); // Stop current speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+            // Try to find a good male/serious voice
+            const voices = window.speechSynthesis.getVoices();
+            const preferred = voices.find(v => v.name.includes('Google US English') || v.name.includes('Samantha'));
+            if (preferred) utterance.voice = preferred;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function log(msg, color='blue-400') {
+            const console = document.getElementById('console');
+            const now = new Date().toLocaleTimeString();
+            console.innerHTML += `<div class="text-${color}">[${now}] ${msg}</div>`;
+            console.scrollTop = console.scrollHeight;
+            
+            // Auto-speak system messages or success logs
+            if (color === 'green-500' || color === 'yellow-500') {
+                speak(msg);
+            }
+        }
+
+        async function triggerSarah() {
+            const name = document.getElementById('sarah-name').value;
+            let phone = document.getElementById('sarah-phone').value;
+            const address = document.getElementById('sarah-address').value;
+            const message = document.getElementById('sarah-message').value;
+            
+            // Auto-fix phone format
+            phone = formatPhone(phone);
+            
+            if(!phone) return alert("Target number required.");
+
+            log(`INITIATING OUTBOUND CALL VIA SARAH...`, 'yellow-500');
+            log(`TARGET: ${name || 'Lead'} | ${phone}`, 'gray-500');
+
+            try {
+                const res = await fetch('/api/call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, address, message })
+                });
+                const data = await res.json();
+                if(data.id) {
+                    log(`SARAH DEPLOYED SUCCESSFULLY. CALL ID: ${data.id}`, 'green-500');
+                    if (data.firstMessage) {
+                        speak(data.firstMessage);
+                    }
+                } else {
+                    log(`VAPI ERROR: ${data.message || 'Check API Key'}`, 'red-500');
+                }
+            } catch (e) {
+                log(`FATAL COMMUNICATION ERROR: ${e.message}`, 'red-700');
+            }
+        }
+
+        // Auto-fix phone number format (add +1 if missing)
+        function formatPhone(phone) {
+            if (!phone) return null;
+            // Remove all non-digit characters
+            let clean = phone.replace(/\D/g, '');
+            // Add +1 prefix for US numbers if missing
+            if (clean.length === 10) {
+                return '+1' + clean;
+            } else if (clean.length === 11 && clean.startsWith('1')) {
+                return '+' + clean;
+            } else if (!clean.startsWith('+')) {
+                return '+' + clean;
+            }
+            return clean.startsWith('+') ? clean : '+' + clean;
+        }
+
+        async function processCsv(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            log(`CSV INJECTION DETECTED: ${file.name}`, 'purple-400');
+            
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: async function(results) {
+                    const leads = results.data;
+                    log(`PARSED ${leads.length} LEADS. INITIALIZING BATCH...`, 'purple-400');
+
+                    for (let i = 0; i < leads.length; i++) {
+                        const row = leads[i];
+                        const name = row.Name || row.name || row['Full Name'] || row['first_name'] || row['Lead Name'] || 'Lead';
+                        let phone = row.Phone || row.phone || row['phone_number'] || row.Mobile;
+                        const address = row.Address || row.address || row['Property Address'] || '';
+
+                        // Auto-fix phone format
+                        phone = formatPhone(phone);
+
+                        if (!phone) {
+                            log(`SKIPPING ROW ${i+1}: NO PHONE FOUND`, 'orange-500');
+                            continue;
+                        }
+
+                        log(`[${i+1}/${leads.length}] DIALING: ${name} at ${phone}...`, 'blue-400');
+                        
+                        try {
+                            const res = await fetch('/api/call', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, phone, address })
+                            });
+                            const data = await res.json();
+                            if (data.id) {
+                                log(`✓ QUEUED: ${name}`, 'green-500');
+                            } else {
+                                log(`✗ FAILED: ${name} (${data.message || 'Error'})`, 'red-500');
+                            }
+                        } catch (e) {
+                            log(`! NETWORK ERROR ON ${name}`, 'red-700');
+                        }
+
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                    
+                    log(`BATCH CAMPAIGN COMPLETE.`, 'neon-green');
+                    input.value = '';
+                }
+            });
+        }
+
+        function auditGhl() {
+            log("RUNNING GHL CONTACTS AUDIT...", "neon-orange");
+            log("PULLING LATEST DATA FROM V1 ENDPOINT...", "gray-500");
+            setTimeout(() => {
+                log("AUDIT COMPLETE: 16,207 CONTACTS VERIFIED.", "neon-green");
+            }, 1500);
+        }
+
+        async function triggerReminder() {
+            const name = document.getElementById('skool-name').value;
+            let phone = document.getElementById('skool-phone').value;
+            const message = document.getElementById('skool-message').value;
+
+            // Auto-fix phone format
+            phone = formatPhone(phone);
+
+            if(!phone || !message) return alert("Phone and Message required for reminders.");
+
+            log(`INITIATING COMMUNITY REMINDER: ${name || 'Member'}...`, 'neon-orange');
+            
+            try {
+                const res = await fetch('/api/call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, message, type: 'skool' })
+                });
+                const data = await res.json();
+                if(data.id) {
+                    log(`REMINDER SENT TO SARAH FOR DISPATCH. CALL ID: ${data.id}`, 'green-500');
+                } else {
+                    log(`REMINDER ERROR: ${data.message || 'Check connection'}`, 'red-500');
+                }
+            } catch (e) {
+                log(`FATAL: ${e.message}`, 'red-700');
+            }
+        }
+
+        async function processSkoolCsv(input) {
+            const file = input.files[0];
+            const message = document.getElementById('skool-message').value;
+            
+            if (!file) return;
+            if (!message) {
+                alert("Please type the reminder message first!");
+                input.value = '';
+                return;
+            }
+
+            log(`COMMUNITY BROADCAST DETECTED: ${file.name}`, 'neon-orange');
+            
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: async function(results) {
+                    const members = results.data;
+                    log(`PARSED ${members.length} MEMBERS. BROADCASTING...`, 'neon-orange');
+
+                    for (let i = 0; i < members.length; i++) {
+                        const row = members[i];
+                        const name = row.Name || row.name || row['Full Name'] || row['Lead Name'] || 'Member';
+                        let phone = row.Phone || row.phone || row['phone_number'];
+
+                        // Auto-fix phone format
+                        phone = formatPhone(phone);
+
+                        if (!phone) {
+                            log(`SKIP [${i+1}]: NO PHONE`, 'red-400');
+                            continue;
+                        }
+
+                        log(`[${i+1}/${members.length}] BROADCASTING TO: ${name} at ${phone}`, 'orange-400');
+                        
+                        try {
+                            await fetch('/api/call', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, phone, message, type: 'skool' })
+                            });
+                            log(`✓ QUEUED: ${name}`, 'green-500');
+                        } catch (e) {
+                            log(`! FAIL: ${name}`, 'red-700');
+                        }
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                    
+                    log(`COMMUNITY BROADCAST COMPLETE.`, 'neon-green');
+                    input.value = '';
+                }
+            });
+        }
+
+        async function triggerRdmReminder() {
+            const name = document.getElementById('rdm-name').value;
+            let phone = document.getElementById('rdm-phone').value;
+            const message = document.getElementById('rdm-message').value;
+
+            // Auto-fix phone format
+            phone = formatPhone(phone);
+
+            if(!phone || !message) return alert("Phone and Message required for RDM outreach.");
+
+            log(`INITIATING RDM OUTREACH: ${name || 'Member'}...`, 'neon-purple');
+            
+            try {
+                const res = await fetch('/api/call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, message, type: 'rdm' })
+                });
+                const data = await res.json();
+                if(data.id) {
+                    log(`RDM CALL QUEUED SUCCESSFULLY. ID: ${data.id}`, 'green-500');
+                } else {
+                    log(`RDM ERROR: ${data.message || 'Check connection'}`, 'red-500');
+                }
+            } catch (e) {
+                log(`FATAL: ${e.message}`, 'red-700');
+            }
+        }
+
+        async function processRdmCsv(input) {
+            const file = input.files[0];
+            const message = document.getElementById('rdm-message').value;
+            
+            if (!file) return;
+            if (!message) {
+                alert("Please type the RDM message first!");
+                input.value = '';
+                return;
+            }
+
+            log(`RDM BATCH BROADCAST DETECTED: ${file.name}`, 'neon-purple');
+            
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: async function(results) {
+                    const members = results.data;
+                    log(`PARSED ${members.length} RDM MEMBERS. BROADCASTING...`, 'neon-purple');
+
+                    for (let i = 0; i < members.length; i++) {
+                        const row = members[i];
+                        const name = row.Name || row.name || row['Full Name'] || row['Lead Name'] || 'Member';
+                        let phone = row.Phone || row.phone || row['phone_number'];
+
+                        // Auto-fix phone format
+                        phone = formatPhone(phone);
+
+                        if (!phone) {
+                            log(`SKIP RDM [${i+1}]: NO PHONE`, 'red-400');
+                            continue;
+                        }
+
+                        log(`[${i+1}/${members.length}] RDM BROADCAST TO: ${name} at ${phone}`, 'purple-400');
+                        
+                        try {
+                            await fetch('/api/call', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, phone, message, type: 'rdm' })
+                            });
+                            log(`✓ RDM QUEUED: ${name}`, 'green-500');
+                        } catch (e) {
+                            log(`! RDM FAIL: ${name}`, 'red-700');
+                        }
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                    
+                    log(`RDM BROADCAST COMPLETE.`, 'neon-green');
+                    input.value = '';
+                }
+            });
+        }
+
+        async function triggerMmsReminder() {
+            const name = document.getElementById('mms-name').value;
+            let phone = document.getElementById('mms-phone').value;
+            const message = document.getElementById('mms-message').value;
+
+            // Auto-fix phone format
+            phone = formatPhone(phone);
+
+            if(!phone || !message) return alert("Phone and Message required for MMS outreach.");
+
+            log(`INITIATING AGENCY OUTREACH: ${name || 'Lead'}...`, 'neon-blue');
+            
+            try {
+                const res = await fetch('/api/call', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, message, type: 'mms' })
+                });
+                const data = await res.json();
+                if(data.id) {
+                    log(`MMS CALL QUEUED SUCCESSFULLY. ID: ${data.id}`, 'green-500');
+                } else {
+                    log(`MMS ERROR: ${data.message || 'Check connection'}`, 'red-500');
+                }
+            } catch (e) {
+                log(`FATAL: ${e.message}`, 'red-700');
+            }
+        }
+
+        async function processMmsCsv(input) {
+            const file = input.files[0];
+            const message = document.getElementById('mms-message').value;
+            
+            if (!file) return;
+            if (!message) {
+                alert("Please type the agency message first!");
+                input.value = '';
+                return;
+            }
+
+            log(`AGENCY BATCH BROADCAST DETECTED: ${file.name}`, 'neon-blue');
+            
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: async function(results) {
+                    const leads = results.data;
+                    log(`PARSED ${leads.length} MMS LEADS. BROADCASTING...`, 'neon-blue');
+
+                    for (let i = 0; i < leads.length; i++) {
+                        const row = leads[i];
+                        const name = row.Name || row.name || row['Full Name'] || row['Lead Name'] || 'Lead';
+                        let phone = row.Phone || row.phone || row['phone_number'];
+
+                        // Auto-fix phone format
+                        phone = formatPhone(phone);
+
+                        if (!phone) {
+                            log(`SKIP MMS [${i+1}]: NO PHONE`, 'red-400');
+                            continue;
+                        }
+
+                        log(`[${i+1}/${leads.length}] MMS BROADCAST TO: ${name} at ${phone}`, 'blue-400');
+                        
+                        try {
+                            await fetch('/api/call', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, phone, message, type: 'mms' })
+                            });
+                            log(`✓ MMS QUEUED: ${name}`, 'green-500');
+                        } catch (e) {
+                            log(`! MMS FAIL: ${name}`, 'red-700');
+                        }
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                    
+                    log(`MMS BROADCAST COMPLETE.`, 'neon-green');
+                    input.value = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

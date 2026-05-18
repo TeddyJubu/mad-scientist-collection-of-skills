@@ -1,0 +1,122 @@
+{
+  "_comment": "A ready-to-use Engineering Project Tracker template. Three databases — Projects, Tasks, Sprints — with the relations and rollups already specified. Pass these to the Notion API in dependency order: Projects → Sprints → Tasks (because Tasks relates to both). Replace `PARENT_PAGE_ID` with the actual parent page UUID before sending.",
+  "parent_page": {
+    "parent": { "page_id": "PARENT_PAGE_ID" },
+    "icon": { "type": "emoji", "emoji": "🚀" },
+    "cover": { "type": "external", "external": { "url": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1500" } },
+    "properties": { "title": { "title": [ { "type": "text", "text": { "content": "Engineering" } } ] } },
+    "children": [
+      {
+        "type": "callout",
+        "callout": {
+          "rich_text": [ { "type": "text", "text": { "content": "Single home for projects, sprints, and tasks. Use the views below to find what you need." } } ],
+          "icon": { "type": "emoji", "emoji": "📌" },
+          "color": "gray_background"
+        }
+      },
+      { "type": "divider", "divider": {} },
+      {
+        "type": "heading_2",
+        "heading_2": { "rich_text": [ { "type": "text", "text": { "content": "Current Sprint" } } ], "color": "default" }
+      },
+      {
+        "type": "paragraph",
+        "paragraph": { "rich_text": [ { "type": "text", "text": { "content": "Add a linked database view of Tasks here, filtered to the active Sprint and grouped by Status (board view)." } } ], "color": "default" }
+      },
+      {
+        "type": "heading_2",
+        "heading_2": { "rich_text": [ { "type": "text", "text": { "content": "Projects" } } ], "color": "default" }
+      },
+      {
+        "type": "paragraph",
+        "paragraph": { "rich_text": [ { "type": "text", "text": { "content": "Add a linked database view of Projects here, gallery layout sorted by Priority then Target Date." } } ], "color": "default" }
+      }
+    ]
+  },
+  "projects_db": {
+    "parent": { "page_id": "PARENT_PAGE_ID" },
+    "icon": { "type": "emoji", "emoji": "📋" },
+    "title": [ { "type": "text", "text": { "content": "Projects" } } ],
+    "properties": {
+      "Project": { "title": {} },
+      "Status": { "status": {} },
+      "Owner": { "people": {} },
+      "Priority": { "select": { "options": [
+        { "name": "P0", "color": "red" },
+        { "name": "P1", "color": "orange" },
+        { "name": "P2", "color": "yellow" },
+        { "name": "P3", "color": "gray" }
+      ] } },
+      "Start Date": { "date": {} },
+      "Target Date": { "date": {} },
+      "Description": { "rich_text": {} }
+    }
+  },
+  "sprints_db": {
+    "parent": { "page_id": "PARENT_PAGE_ID" },
+    "icon": { "type": "emoji", "emoji": "🏃" },
+    "title": [ { "type": "text", "text": { "content": "Sprints" } } ],
+    "properties": {
+      "Sprint Name": { "title": {} },
+      "Start": { "date": {} },
+      "End": { "date": {} },
+      "Goal": { "rich_text": {} }
+    }
+  },
+  "tasks_db": {
+    "_note": "Create AFTER Projects and Sprints, since Tasks relations reference both. Use the IDs returned by the previous calls in the database_id fields.",
+    "parent": { "page_id": "PARENT_PAGE_ID" },
+    "icon": { "type": "emoji", "emoji": "✅" },
+    "title": [ { "type": "text", "text": { "content": "Tasks" } } ],
+    "properties": {
+      "Task": { "title": {} },
+      "Project": { "relation": {
+        "database_id": "PROJECTS_DB_ID",
+        "type": "dual_property",
+        "dual_property": { "synced_property_name": "Tasks" }
+      } },
+      "Sprint": { "relation": {
+        "database_id": "SPRINTS_DB_ID",
+        "type": "dual_property",
+        "dual_property": { "synced_property_name": "Tasks" }
+      } },
+      "Status": { "status": {} },
+      "Assignee": { "people": {} },
+      "Priority": { "select": { "options": [
+        { "name": "P0", "color": "red" },
+        { "name": "P1", "color": "orange" },
+        { "name": "P2", "color": "yellow" },
+        { "name": "P3", "color": "gray" }
+      ] } },
+      "Estimate": { "number": { "format": "number" } },
+      "Due Date": { "date": {} },
+      "Type": { "select": { "options": [
+        { "name": "Feature", "color": "green" },
+        { "name": "Bug", "color": "red" },
+        { "name": "Chore", "color": "gray" },
+        { "name": "Spike", "color": "purple" }
+      ] } }
+    }
+  },
+  "rollups_to_add_after_tasks_db_exists": {
+    "_note": "PATCH the projects_db with these rollup properties AFTER the Tasks DB exists and its dual-property reverse relation 'Tasks' is in place.",
+    "Open Tasks": { "rollup": {
+      "relation_property_name": "Tasks",
+      "rollup_property_name": "Status",
+      "function": "count_not_empty"
+    } },
+    "Completed Tasks": { "rollup": {
+      "relation_property_name": "Tasks",
+      "rollup_property_name": "Status",
+      "function": "count_values"
+    } }
+  },
+  "build_sequence": [
+    "1. Create the parent page (POST /v1/pages).",
+    "2. Create Projects DB (POST /v1/databases, parent = parent page id).",
+    "3. Create Sprints DB.",
+    "4. Create Tasks DB, substituting the Projects DB and Sprints DB IDs into the relation property database_id fields.",
+    "5. PATCH the Projects DB to add rollup properties for Open Tasks and Completed Tasks.",
+    "6. Tell the user to set up views in the UI: Tasks board grouped by Status, Tasks 'My Tasks' filter, Sprints timeline view, Projects gallery."
+  ]
+}

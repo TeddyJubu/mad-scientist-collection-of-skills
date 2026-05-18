@@ -1,0 +1,8 @@
+# Secrets - never commit
+# Keep .env files out (contain live API keys)
+**/.env
+**/*.env
+
+# Keep other skill files (SKILL.md is now clean — no raw keys)
+# apify-actor-finder/SKILL.md — clean, placeholder values only
+# productivity/notion/SKILL.md — clean, no raw keys

@@ -1,0 +1,4 @@
+source_address,match_status,owner_name,owner_street,owner_city,owner_state,owner_zip,owner_full_mailing,property_street,property_city,property_state,property_zip,estimated_value,equity,ltv_pct,open_liens,lien_balance,owner_occupied,absentee_owner,free_and_clear,bedrooms,bathrooms,year_built,property_type,last_sale_price,last_sale_date
+2605 Lovegrass Ln,NO_MATCH,,,,,,,,,,,,,,,,,,,,,,,,
+1812 Wellbourne Dr NE,NO_MATCH,,,,,,,,,,,,,,,,,,,,,,,,
+445 N Virginia St,NO_MATCH,,,,,,,,,,,,,,,,,,,,,,,,

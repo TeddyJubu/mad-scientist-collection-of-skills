@@ -1,0 +1,87 @@
+{
+  "name": "census-data",
+  "version": "1.0.0",
+  "description": "Fetch demographic, economic, and population data from the U.S. Census Bureau API",
+  "author": "James",
+  "created": "2026-03-08",
+  "type": "data-api",
+  "triggers": [
+    "census data",
+    "population by",
+    "demographic data",
+    "ACS data",
+    "American Community Survey",
+    "county business patterns",
+    "poverty estimates",
+    "housing statistics",
+    "census API",
+    "FIPS code",
+    "median income",
+    "population estimate"
+  ],
+  "files": {
+    "skill": "SKILL.md",
+    "readme": "README.md",
+    "quickRef": "QUICK-REFERENCE.md",
+    "cli": "run-census-query.js",
+    "secrets": ".secrets/census.env",
+    "examples": [
+      "examples/population-by-state.md",
+      "examples/median-income-md-counties.md",
+      "examples/business-patterns.md",
+      "examples/poverty-estimates.md"
+    ]
+  },
+  "capabilities": {
+    "datasets": [
+      "American Community Survey (ACS 1-Year, 5-Year)",
+      "Decennial Census (2000, 2010, 2020)",
+      "County Business Patterns (CBP)",
+      "Economic Census",
+      "Population Estimates",
+      "Poverty Estimates (SAIPE)",
+      "International Trade",
+      "Community Resilience Estimates"
+    ],
+    "geographies": [
+      "Nation",
+      "States",
+      "Counties",
+      "Metropolitan Areas",
+      "Places (Cities/Towns)",
+      "Census Tracts",
+      "Block Groups",
+      "ZIP Code Tabulation Areas"
+    ],
+    "formats": [
+      "JSON",
+      "CSV",
+      "Markdown"
+    ]
+  },
+  "dependencies": {
+    "runtime": "node",
+    "packages": []
+  },
+  "configuration": {
+    "apiKey": {
+      "required": true,
+      "location": ".secrets/census.env",
+      "variable": "CENSUS_API_KEY",
+      "status": "configured"
+    }
+  },
+  "usage": {
+    "cli": "./run-census-query.js --dataset <dataset> --year <year> --variables <vars> --for <geography>",
+    "examples": [
+      "Population by state: ./run-census-query.js --dataset acs/acs5 --year 2021 --variables NAME,B01003_001E --for 'state:*'",
+      "County income: ./run-census-query.js --dataset acs/acs5 --year 2021 --variables NAME,B19013_001E --for 'county:*' --in 'state:24'",
+      "Business data: ./run-census-query.js --dataset cbp --year 2021 --variables NAME,ESTAB,EMP --NAICS2017 54 --for 'county:031' --in 'state:24'"
+    ]
+  },
+  "testing": {
+    "lastTested": "2026-03-08",
+    "testQuery": "Population by state (2021 ACS 5-Year)",
+    "status": "passing"
+  }
+}
