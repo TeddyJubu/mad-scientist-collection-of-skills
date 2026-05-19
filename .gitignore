@@ -2,6 +2,11 @@
 # Keep .env files out (contain live API keys)
 **/.env
 **/*.env
+*.pyc
+__pycache__/
+**/__pycache__/
+.DS_Store
+*.log
 
 # Keep other skill files (SKILL.md is now clean — no raw keys)
 # apify-actor-finder/SKILL.md — clean, placeholder values only

@@ -1,3 +1,9 @@
+---
+name: bob
+description: BatchData property skip trace workflow for finding owner contact information from a property address.
+category: ai-agents
+---
+
 # Bob — BatchData Property Skip Trace Skill
 
 ## What It Does

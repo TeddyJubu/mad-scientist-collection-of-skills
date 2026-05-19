@@ -1,3 +1,9 @@
+---
+name: fish-audio-tts
+description: Convert text to speech with the Fish Audio API and save generated narration as MP3 audio.
+category: media-lifestyle
+---
+
 # Fish Audio TTS Skill
 
 Convert text to speech using the Fish Audio API.

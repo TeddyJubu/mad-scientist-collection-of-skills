@@ -1,3 +1,9 @@
+---
+name: enhancor
+description: Interactive Seedance 2.0 and Enhancor video generation workflow for text-to-video, image-to-video, UGC, extension, multi-frame, lipsync, and voice-clone modes.
+category: ai-agents
+---
+
 # Enhancor Skill — Interactive Video Generation
 
 ## What It Does

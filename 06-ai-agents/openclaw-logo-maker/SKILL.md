@@ -1,3 +1,9 @@
+---
+name: openclaw-logo-maker
+description: Generate professional logo variations using Gemini image generation, including brand intake, prompt creation, post-processing, packaging, and delivery guidance.
+category: ai-agents
+---
+
 # OpenCLAW Logo Maker Skill
 
 **Name:** openclaw-logo-maker
@@ -56,7 +62,7 @@ Collect these details before generating:
 
 ### API Key
 ```
-GEMINI_API_KEY=AIzaSyCwtFlw1ZswA3juvTMapb5aYRfw4NXxhio
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 **Default Model:** `gemini-3.1-flash-image-preview` (confirmed working for logo generation)

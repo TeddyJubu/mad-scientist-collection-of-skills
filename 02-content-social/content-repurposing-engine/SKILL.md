@@ -1,5 +1,5 @@
 ---
-name: Content Repurposer
+name: content-repurposing-engine
 description: Turn one piece of content into 10+ formats. Transform blog posts, podcasts, videos, or talks into tweets, LinkedIn posts, newsletters, carousels, and more.
 ---
 
