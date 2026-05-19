@@ -19,6 +19,67 @@ Mad Scientist Collection of Skills is an organized library of reusable agent cap
 
 The collection is designed for agent runtimes such as Hermes Gateway, OpenClaw, Claude-style skill loaders, and any workflow that can discover and execute `SKILL.md` instructions.
 
+## AI Agent Install Guide
+
+Use this repository when your agent can scan nested folders for `SKILL.md` files. Installing means making the skill folders available to the agent; do not execute every script during install.
+
+### 1. Clone
+
+```bash
+git clone https://github.com/TeddyJubu/mad-scientist-collection-of-skills.git
+cd mad-scientist-collection-of-skills
+```
+
+### 2. Validate Before Loading
+
+```bash
+test "$(find . -name SKILL.md | wc -l | tr -d ' ')" = "205"
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+bad = []
+for path in Path(".").rglob("SKILL.md"):
+    text = path.read_text(errors="replace")
+    if not text.startswith("---") or not re.search(r"^name:\s*.+", text, re.M) or not re.search(r"^description:\s*.+", text, re.M):
+        bad.append(str(path))
+if bad:
+    raise SystemExit("Invalid SKILL.md files:\n" + "\n".join(bad))
+print("Validated 205 skills")
+PY
+```
+
+### 3. Install For A Recursive Skill Loader
+
+Set `AGENT_SKILLS_ROOT` to the folder your agent scans. If unset, the commands use the common Hermes path.
+
+```bash
+export AGENT_SKILLS_ROOT="${AGENT_SKILLS_ROOT:-$HOME/.hermes/skills}"
+mkdir -p "$AGENT_SKILLS_ROOT/mad-scientist-collection"
+
+rsync -a --delete \
+  --exclude ".git" \
+  --exclude ".env" \
+  --exclude "*.env" \
+  --exclude "__pycache__" \
+  --exclude "*.pyc" \
+  ./ "$AGENT_SKILLS_ROOT/mad-scientist-collection/"
+```
+
+Then point the agent at:
+
+```text
+$AGENT_SKILLS_ROOT/mad-scientist-collection
+```
+
+### 4. Load Behavior For Agents
+
+- Recursively discover every `SKILL.md`.
+- Use frontmatter `name` as the skill ID.
+- Read a skill's local `references/`, `scripts/`, `templates/`, and `assets/` only when that skill is selected.
+- Keep secrets in local `.env` files; never commit or paste live keys into `SKILL.md`.
+- If your runtime only scans one flat skill directory, use [`mad-scientist-skill-monorepo`](https://github.com/TeddyJubu/mad-scientist-skill-monorepo) instead.
+
 ## Collection Map
 
 ```text
@@ -90,14 +151,7 @@ description: One clear sentence describing when and why to use this skill.
 ---
 ```
 
-## Setup
-
-Clone the collection:
-
-```bash
-git clone https://github.com/TeddyJubu/mad-scientist-collection-of-skills.git
-cd mad-scientist-collection-of-skills
-```
+## Secrets
 
 Store secrets outside git:
 
