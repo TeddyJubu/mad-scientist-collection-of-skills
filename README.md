@@ -1,12 +1,12 @@
 # Mad Scientist Collection of Skills
 
 <p align="center">
-  <strong>A curated operating library of agent skills for real estate, research, media, infrastructure, automation, and software work.</strong>
+  <strong>A curated operating library of client-ready agent skills for real estate, research, media, infrastructure, automation, and creative work.</strong>
 </p>
 
 <p align="center">
-  <img alt="Skills" src="https://img.shields.io/badge/skills-205-111827?style=for-the-badge">
-  <img alt="Categories" src="https://img.shields.io/badge/categories-12-7c3aed?style=for-the-badge">
+  <img alt="Skills" src="https://img.shields.io/badge/skills-55-111827?style=for-the-badge">
+  <img alt="Categories" src="https://img.shields.io/badge/categories-9-7c3aed?style=for-the-badge">
   <img alt="Format" src="https://img.shields.io/badge/format-SKILL.md-2563eb?style=for-the-badge">
   <img alt="Quality" src="https://img.shields.io/badge/quality-validated-059669?style=for-the-badge">
 </p>
@@ -17,7 +17,7 @@
 
 Mad Scientist Collection of Skills is an organized library of reusable agent capabilities. Each skill is a self-contained folder with a `SKILL.md` entrypoint and optional scripts, references, examples, templates, or assets.
 
-The collection is designed for agent runtimes such as Hermes Gateway, OpenClaw, Claude-style skill loaders, and any workflow that can discover and execute `SKILL.md` instructions.
+This cleaned edition removes system/default skills that should not be presented as client giveaway skills.
 
 ## AI Agent Install Guide
 
@@ -33,162 +33,65 @@ cd mad-scientist-collection-of-skills
 ### 2. Validate Before Loading
 
 ```bash
-test "$(find . -name SKILL.md | wc -l | tr -d ' ')" = "205"
-
-python3 - <<'PY'
-from pathlib import Path
-import re
-bad = []
-for path in Path(".").rglob("SKILL.md"):
-    text = path.read_text(errors="replace")
-    if not text.startswith("---") or not re.search(r"^name:\s*.+", text, re.M) or not re.search(r"^description:\s*.+", text, re.M):
-        bad.append(str(path))
-if bad:
-    raise SystemExit("Invalid SKILL.md files:\n" + "\n".join(bad))
-print("Validated 205 skills")
-PY
+test "$(find . -name SKILL.md | wc -l | tr -d ' ')" = "55"
 ```
 
 ### 3. Install For A Recursive Skill Loader
 
-Set `AGENT_SKILLS_ROOT` to the folder your agent scans. If unset, the commands use the common Hermes path.
-
 ```bash
 export AGENT_SKILLS_ROOT="${AGENT_SKILLS_ROOT:-$HOME/.hermes/skills}"
 mkdir -p "$AGENT_SKILLS_ROOT/mad-scientist-collection"
-
-rsync -a --delete \
-  --exclude ".git" \
-  --exclude ".env" \
-  --exclude "*.env" \
-  --exclude "__pycache__" \
-  --exclude "*.pyc" \
-  ./ "$AGENT_SKILLS_ROOT/mad-scientist-collection/"
+rsync -a --delete --exclude ".git" --exclude ".env" --exclude "*.env" --exclude "__pycache__" --exclude "*.pyc" ./ "$AGENT_SKILLS_ROOT/mad-scientist-collection/"
 ```
-
-Then point the agent at:
-
-```text
-$AGENT_SKILLS_ROOT/mad-scientist-collection
-```
-
-### 4. Load Behavior For Agents
-
-- Recursively discover every `SKILL.md`.
-- Use frontmatter `name` as the skill ID.
-- Read a skill's local `references/`, `scripts/`, `templates/`, and `assets/` only when that skill is selected.
-- Keep secrets in local `.env` files; never commit or paste live keys into `SKILL.md`.
-- If your runtime only scans one flat skill directory, use [`mad-scientist-skill-monorepo`](https://github.com/TeddyJubu/mad-scientist-skill-monorepo) instead.
 
 ## Collection Map
 
-```text
-Mad Scientist Collection of Skills
-├── 01-real-estate             property research, skip tracing, rehab estimates
-├── 02-content-social          YouTube, thumbnails, social posting, repurposing
-├── 03-productivity            Notion, email, files, documents, PDFs
-├── 04-devops-infrastructure   Docker, Traefik, Vercel, systemd, ports
-├── 05-data-research           Apify, Census, Apollo, Brave, SEO, research
-├── 06-ai-agents               agent workflows, voice, browser, OpenClaw
-├── 07-image-graphics          image generation, editing, video, design
-├── 08-communication           Discord and communication surfaces
-├── 09-media-lifestyle         weather, TTS, audio, video, Spotify
-├── 10-openclaw-mcp            OpenClaw platform and MCP client skills
-├── 11-software-development    review, debugging, TDD, planning, agents
-└── 12-tools                   broad utility bench: MLOps, creative, GitHub, email
-```
+- `01-real-estate` (7 skills): Property research, owner lookup, skip tracing, repair estimates, and real estate workflows
+- `02-content-social` (15 skills): YouTube, social posting, content repurposing, thumbnails, scripts, and marketing assets
+- `03-productivity` (3 skills): Notion, email, Google Workspace, document, and PDF workflows
+- `04-devops-infrastructure` (2 skills): Deployment, hosting, Docker, Vercel, and infrastructure workflows
+- `05-data-research` (8 skills): Web research, public data, search, scraping, SEO, and source collection
+- `06-ai-agents` (6 skills): Agent operations, voice workflows, browser automation, and agent setup
+- `07-image-graphics` (5 skills): Image generation, editing, design, avatars, video, and visual production
+- `09-media-lifestyle` (3 skills): Weather, audio, YouTube transcripts, and media utility workflows
+- `12-tools` (6 skills): General-purpose utilities across ML, GitHub, email, creative production, and operations
 
 ## Category Index
 
 | Area | Skills | Best for |
 |---|---:|---|
-| [`01-real-estate`](./01-real-estate) | 7 | Property lookup, skip tracing, repair estimates, investment reports |
-| [`02-content-social`](./02-content-social) | 15 | YouTube growth, social posting, scripts, thumbnails, content reuse |
-| [`03-productivity`](./03-productivity) | 9 | Notion, email, file delivery, document and PDF workflows |
-| [`04-devops-infrastructure`](./04-devops-infrastructure) | 6 | Deployments, reverse proxying, Vercel, service health, port control |
-| [`05-data-research`](./05-data-research) | 17 | Web research, data APIs, Census, Apify, Apollo, SEO, papers |
-| [`06-ai-agents`](./06-ai-agents) | 21 | Agent operations, OpenClaw, outbound voice, browser automation |
-| [`07-image-graphics`](./07-image-graphics) | 8 | Image generation, image editing, avatar video, Remotion, design |
-| [`08-communication`](./08-communication) | 1 | Discord control |
-| [`09-media-lifestyle`](./09-media-lifestyle) | 10 | TTS, video frames, transcripts, weather, music, media utilities |
-| [`10-openclaw-mcp`](./10-openclaw-mcp) | 3 | OpenClaw platform operations and MCP tooling |
-| [`11-software-development`](./11-software-development) | 12 | Code review, debugging, TDD, planning, subagent development |
-| [`12-tools`](./12-tools) | 96 | General-purpose utilities across creative, MLOps, GitHub, email, docs |
+| [`01-real-estate`](./01-real-estate) | 7 | Property research, owner lookup, skip tracing, repair estimates, and real estate workflows |
+| [`02-content-social`](./02-content-social) | 15 | YouTube, social posting, content repurposing, thumbnails, scripts, and marketing assets |
+| [`03-productivity`](./03-productivity) | 3 | Notion, email, Google Workspace, document, and PDF workflows |
+| [`04-devops-infrastructure`](./04-devops-infrastructure) | 2 | Deployment, hosting, Docker, Vercel, and infrastructure workflows |
+| [`05-data-research`](./05-data-research) | 8 | Web research, public data, search, scraping, SEO, and source collection |
+| [`06-ai-agents`](./06-ai-agents) | 6 | Agent operations, voice workflows, browser automation, and agent setup |
+| [`07-image-graphics`](./07-image-graphics) | 5 | Image generation, editing, design, avatars, video, and visual production |
+| [`09-media-lifestyle`](./09-media-lifestyle) | 3 | Weather, audio, YouTube transcripts, and media utility workflows |
+| [`12-tools`](./12-tools) | 6 | General-purpose utilities across ML, GitHub, email, creative production, and operations |
 
 ## Featured Capabilities
 
 | Skill | Location | What it does |
 |---|---|---|
-| `mad-skip-trace` | [`01-real-estate/mad-skip-trace`](./01-real-estate/mad-skip-trace) | Skip trace property addresses through BatchData |
-| `nova-youtube-agent` | [`02-content-social/nova-youtube-agent`](./02-content-social/nova-youtube-agent) | Run YouTube growth onboarding, ideation, scripts, and feedback loops |
-| `notion-mastery` | [`03-productivity/notion-mastery`](./03-productivity/notion-mastery) | Build structured Notion systems, pages, databases, and templates |
-| `traefik-docker-deploy` | [`04-devops-infrastructure/traefik-docker-deploy`](./04-devops-infrastructure/traefik-docker-deploy) | Deploy Docker apps behind Traefik with SSL and routing guidance |
-| `firehose` | [`05-data-research/firehose`](./05-data-research/firehose) | Monitor web mentions and real-time page streams |
-| `openclaw-logo-maker` | [`06-ai-agents/openclaw-logo-maker`](./06-ai-agents/openclaw-logo-maker) | Generate polished logo variations with image models |
-| `nano-banana-image-gen` | [`07-image-graphics/nano-banana-image-gen`](./07-image-graphics/nano-banana-image-gen) | Generate image assets with Gemini image models |
-| `software-development` | [`11-software-development/software-development`](./11-software-development/software-development) | Review, debug, plan, and ship software with agent workflows |
-
-## Skill Anatomy
-
-Each skill should be easy for an agent to load and safe for a maintainer to inspect:
-
-```text
-skill-name/
-├── SKILL.md       main instructions and metadata
-├── scripts/       optional executable helpers
-├── references/    API notes, examples, operational guides
-├── templates/     reusable prompts, documents, or code shapes
-├── assets/        static supporting assets
-└── .env           local secrets only, never committed
-```
-
-Every `SKILL.md` starts with YAML frontmatter:
-
-```yaml
----
-name: example-skill
-description: One clear sentence describing when and why to use this skill.
----
-```
-
-## Secrets
-
-Store secrets outside git:
-
-```bash
-~/.hermes/skills/<skill>/.env
-~/.hermes/.env
-```
-
-Use placeholders in committed docs and scripts:
-
-```bash
-API_KEY=your_api_key_here
-```
-
-## Quality Gates
-
-The current collection has been checked for:
-
-| Check | Status |
-|---|---|
-| `SKILL.md` frontmatter present | Passed |
-| Unique skill names | Passed |
-| JSON validity | Passed |
-| Python syntax compilation | Passed |
-| JavaScript syntax check | Passed |
-| Shell syntax check | Passed |
-| Bundled pytest suite | `109 passed, 8 skipped` |
-| Obvious committed secret patterns | Clean, except masked examples |
+| `batchdata-skip-trace` | [`01-real-estate/batchdata-skip-trace`](./01-real-estate/batchdata-skip-trace) | Skip trace property addresses to get owner information using the BatchData API. Use when Charles or Bob needs  |
+| `homedepot-repair-estimator` | [`01-real-estate/homedepot-repair-estimator`](./01-real-estate/homedepot-repair-estimator) | Analyze property images, identify needed repairs, and generate contractor-style material estimates with Home D |
+| `landglide-lookup` | [`01-real-estate/landglide-lookup`](./01-real-estate/landglide-lookup) | Look up US property parcel data via the ReportAll USA / LandGlide API. Query by address, parcel ID, owner name |
+| `mad-skip-trace` | [`01-real-estate/mad-skip-trace`](./01-real-estate/mad-skip-trace) | Skip trace a property address through the BatchData API to find owner names, phone numbers, emails, alternate  |
+| `owner-skip-trace` | [`01-real-estate/owner-skip-trace`](./01-real-estate/owner-skip-trace) | Skip trace a property owner by name and address using public web sources — free, no paid databases needed. Fin |
+| `rentcast-property-report` | [`01-real-estate/rentcast-property-report`](./01-real-estate/rentcast-property-report) | Generates a comprehensive property analysis and investment report for a given US address using the Rentcast AP |
+| `sdat-property-search` | [`01-real-estate/sdat-property-search`](./01-real-estate/sdat-property-search) | Search Maryland SDAT Real Property database for property owner, assessment, and tax info — no login required.  |
+| `Content Repurposer` | [`02-content-social/Content Repurposer`](./02-content-social/Content Repurposer) | Turn one piece of content into 10+ formats. Transform blog posts, podcasts, videos, or talks into tweets, Link |
+| `blotato-text-poster` | [`02-content-social/blotato-text-poster`](./02-content-social/blotato-text-poster) | Post text-only content (X threads, text posts) to social platforms via the Blotato v2 API. |
+| `content-repurposing-engine` | [`02-content-social/content-repurposing-engine`](./02-content-social/content-repurposing-engine) | Turn one piece of content into 10+ formats. Transform blog posts, podcasts, videos, or talks into tweets, Link |
+| `copywriting` | [`02-content-social/copywriting`](./02-content-social/copywriting) | When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pa |
+| `gpt-image-2` | [`02-content-social/gpt-image-2`](./02-content-social/gpt-image-2) | Generate images with OpenAI GPT Image 2 (model id `gpt-image-2`) — Charles's default image generator on Hermes |
 
 ## Maintenance Rules
 
 - Keep `SKILL.md` focused on when to use the skill and how to operate it.
 - Keep API keys, tokens, host passwords, and private environment values out of git.
-- Prefer environment variables and `.env` examples with placeholder values.
-- Add scripts only when they are reusable and parse cleanly.
-- Avoid duplicate skill names; the `name` field should be stable and machine-friendly.
-- Keep host-specific details parameterized with environment variables when possible.
+- Do not re-add system/default skills removed by the client cleanup pass.
 
 ## License
 
